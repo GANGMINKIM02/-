@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Easy-Read 판결문 작성 보조</title>
+  </head>
+  <body>
+    <noscript>Easy-Read를 사용하려면 JavaScript를 켜 주세요.</noscript>
+    <script>
+      window.addEventListener("error", function (e) {
+        var t = e.target;
+        if (t && t.tagName === "SCRIPT" && t.src && t.src.indexOf("/assets/") !== -1) {
+          if (!sessionStorage.getItem("easyread-asset-reload")) {
+            sessionStorage.setItem("easyread-asset-reload", "1");
+            location.reload();
+          }
+        }
+      }, true);
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

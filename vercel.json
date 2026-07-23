@@ -1,0 +1,31 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.py" },
+    { "source": "/images/(.*)", "destination": "/api/index.py" },
+    { "source": "/health", "destination": "/api/index.py" },
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/documents/:path*", "destination": "/index.html" },
+    { "source": "/((?!api/|images/|assets/|favicon\\.svg).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    },
+    {
+      "source": "/index.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    }
+  ],
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 120,
+      "memory": 1024,
+      "includeFiles": "images/**",
+      "excludeFiles": "{frontend/**,samples/**,data/**,scripts/**,.cursor/**,**/*.pdf,**/*.docx,**/*.md,node_modules/**}"
+    }
+  }
+}

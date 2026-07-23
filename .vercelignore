@@ -1,0 +1,10 @@
+.venv
+__pycache__
+data
+frontend/node_modules
+.cursor
+*.pdf
+samples
+scripts
+test_*.py
+Untitled

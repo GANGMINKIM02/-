@@ -1,0 +1,162 @@
+# 프로젝트 개발 지침 & API 명세 규칙
+
+## [개발 규칙]
+1. 기존 API의 URL, Method, Request, Response를 임의로 변경하지 않는다.
+2. 새로운 API를 추가하면 API 명세도 함께 업데이트한다.
+3. 기존 API를 수정하면 변경된 명세도 함께 수정한다.
+4. API 명세가 프론트와의 계약(Contract)이므로 코드보다 명세를 우선한다.
+5. API를 추가하거나 수정한 후에는 항상 최신 API 명세서를 답변에 출력한다.
+
+## [현재 API 명세]
+
+GET    /api/health
+- 서버 상태 확인
+
+GET    /api/documents/catalog/images
+- 이미지 카탈로그 조회 (로컬 그림 DB)
+
+GET    /api/documents/catalog/images/web?q={query}
+- AI 프롬프트 웹 이미지 검색 (그림 탭)
+- Response: ImageCatalogItem[] ({ image_file, title, url, source_url? })
+
+POST   /api/documents/upload
+- 문서 업로드(OCR)
+- Request: multipart/form-data(file)
+- Header (optional): X-User-Id — 로그인 사용자 ID (회원별 원본 저장)
+- Response: id, filename, doc_type, page_count, pages, full_text
+
+GET    /api/documents/user-projects
+- 로그인 사용자의 저장 프로젝트 목록
+- Header: X-User-Id (또는 Query: user_id)
+- Response: UserProjectItem[] ({ doc_id, filename, created_at, updated_at, has_source, has_summary, has_translation, has_easyread_pdf, has_easyread })
+
+GET    /api/documents/user-projects/{doc_id}/artifact/{kind}
+- 저장된 요약/번역/이지리드 텍스트 조회 (kind: summary|translation|easyread)
+- Header: X-User-Id (또는 Query: user_id)
+- Response: { content: string }
+
+GET    /api/documents/user-projects/{doc_id}/translation-segments
+- 저장된 번역 세그먼트(그림 배치 image_placements 포함) 조회
+- Header: X-User-Id (또는 Query: user_id)
+- Response: TranslationSegment[]
+
+POST   /api/documents/user-projects/{doc_id}/source
+- 회원 저장소에 업로드 원본 재업로드(브라우저 IndexedDB 동기화 등)
+- Request: multipart/form-data(file)
+- Header: X-User-Id (또는 Query: user_id)
+- Response: 204
+
+GET    /api/documents/user-projects/{doc_id}/source
+- 회원 저장소의 업로드 원본 inline 제공
+- Header: X-User-Id (또는 Query: user_id)
+
+GET    /api/documents/user-projects/{doc_id}/easyread.pdf
+- 회원 저장소의 이지리드 PDF inline 제공
+- Header: X-User-Id (또는 Query: user_id)
+
+DELETE /api/documents/user-projects/{doc_id}
+- 회원 저장소에서 프로젝트 삭제
+- Header: X-User-Id (또는 Query: user_id)
+- Response: 204
+
+GET    /api/documents/admin/user-storage
+- 관리자: 전체 회원 저장 프로젝트 목록
+- Header: X-User-Id (ADMIN_EMAILS에 등록된 계정)
+- Response: { users: [{ user_id, projects: UserProjectItem[] }] }
+
+DELETE /api/documents/admin/user-storage/{storage_user_id}/projects/{doc_id}
+- 관리자: 특정 회원 저장 프로젝트 삭제
+- Header: X-User-Id (ADMIN_EMAILS)
+- Response: 204
+
+GET    /api/documents/{doc_id}
+- 문서 조회
+
+PATCH  /api/documents/{doc_id}/doc-type
+- 사건 유형 수동 변경 (criminal|civil|family|administrative)
+- Request: { "doc_type": "civil" }
+
+GET    /api/documents/{doc_id}/pages/{page_num}
+- 특정 페이지 조회
+
+GET    /api/documents/{doc_id}/source
+- 업로드 원본 파일 inline 제공 (PDF/이미지 미리보기)
+
+HEAD   /api/documents/{doc_id}/source
+- 원본 파일 존재 여부 확인
+
+POST   /api/documents/{doc_id}/summarize
+- AI 요약 생성
+- Query: force(boolean)
+- Header (optional): X-User-Id — 요약 저장
+- Request (optional, 서버 문서 유실 시 복구): { full_text, doc_type, filename, pages }
+
+PATCH  /api/documents/{doc_id}/summary
+- 요약 수동 수정
+- Header (optional): X-User-Id — 요약 저장
+- Request: { summary, full_text?, doc_type?, filename?, pages? }
+
+POST   /api/documents/{doc_id}/summary/refine
+- AI로 요약 수정
+- Header (optional): X-User-Id — 요약 저장
+- Request: { prompt, summary? } — summary: 화면의 현재 요약문 (미저장 편집 반영)
+
+POST   /api/documents/{doc_id}/translate
+- 쉬운 글 생성
+- Header (optional): X-User-Id — 번역/이지리드 텍스트 저장
+- Request (optional, 서버 문서 유실 시 복구): { full_text, doc_type, filename, pages, summary? }
+
+PATCH  /api/documents/{doc_id}/translation
+- 쉬운 글 수정
+- Header (optional): X-User-Id — 번역/이지리드 텍스트 저장
+- Request: { segments, full_text?, doc_type?, filename?, pages?, summary? }
+
+POST   /api/documents/{doc_id}/translation/refine
+- AI로 쉬운 글 수정
+- Header (optional): X-User-Id — 번역/이지리드 텍스트 저장
+- Request: { prompt, segments? } — segments: 화면의 현재 번역 세그먼트 (미저장 편집·그림 배치 반영)
+
+POST   /api/documents/{doc_id}/translation/checklist
+- 쉬운 글 체크리스트 검사
+
+POST   /api/documents/{doc_id}/translation/detect-placements
+- 이미지 배치 추천 (소제목별 첫 항목 1슬롯): 번역문 ↔ LEGAL_DB easy_text 유사도 + Upstage Solar로 시각자료(image_file) 선정
+- Request (optional): DetectPlacementsRequest { full_text, doc_type, filename, pages, summary?, existing_placements?, translation_text? }
+
+GET    /api/documents/{doc_id}/export.docx
+- Word 다운로드 (이지리드 판결문만, 원문·PDF 병합 없음)
+- Header (optional): X-User-Id — docx/이지리드 텍스트 저장
+
+POST   /api/documents/{doc_id}/export.docx
+- Word 생성·다운로드 (이지리드 판결문만, 3×3 표 2단 레이아웃, segments·image_base64 지원)
+- Header (optional): X-User-Id — docx/이지리드 텍스트 저장
+- Request (optional): ExportRequest (segments, summary, filename, source_pdf_base64? 등 — source_pdf는 병합에 사용하지 않음)
+
+GET    /api/documents/{doc_id}/export.pdf
+- PDF 미리보기 (inline, 이지리드 판결문만)
+- Header (optional): X-User-Id — pdf/이지리드 텍스트 저장
+
+POST   /api/documents/{doc_id}/export.pdf
+- PDF 생성·다운로드 (이지리드 판결문만)
+- Header (optional): X-User-Id — pdf/이지리드 텍스트 저장
+- Query: download(boolean) — true면 attachment, false면 inline 미리보기
+- Request (optional): ExportRequest (segments, summary, filename, source_pdf_base64? 등)
+- segments[].image_placements[].image_base64 — 추출 시 브라우저에서 인코딩한 data URL (선택)
+
+POST   /api/chat
+- ERAI 챗봇 (Solar) — DB(LEGAL_DB) 우선, 부족 시 웹 검색
+- Request: { message, history?: [{ role: "user"|"assistant", content }] }
+- Response: { reply, sources: ["db"|"document"|"web"|"solar"] }
+
+POST   /api/chat/documents/{doc_id}
+- 문서 맥락 포함 챗봇
+- Request/Response: POST /api/chat 와 동일
+
+GET    /api/chat/prompt
+- 챗봇 system prompt 조회
+- Response: { system_prompt }
+
+PATCH  /api/chat/prompt
+- 챗봇 system prompt 수정 (data/chatbot_prompt.yaml 저장)
+- Request: { system_prompt }
+- Response: { system_prompt }

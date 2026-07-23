@@ -1,0 +1,148 @@
+# 이지리드 번역본 출력 전 체크리스트 (가이드북)
+# auto: true → 프로그램 자동 검사 / false → 수동 확인 안내
+
+items:
+  # --- 형식적 ---
+  - id: font_size
+    category: formal
+    label: "본문 글자 크기 12pt 이상 (Word 출력 시 12~14pt)"
+    auto: false
+    note: "Word 내보내기에서 맑은 고딕 12pt 적용"
+
+  - id: font_gothic
+    category: formal
+    label: "고딕체 계열 사용 (판결서체 아님)"
+    auto: false
+
+  - id: no_italic_shadow
+    category: formal
+    label: "기울임·글자 테두리·그림자 사용하지 않음"
+    auto: false
+
+  - id: left_align
+    category: formal
+    label: "왼쪽 정렬 (양쪽 정렬 아님)"
+    auto: false
+
+  - id: no_indent
+    category: formal
+    label: "문단 첫 줄 들여쓰기 없음"
+    auto: true
+    check: no_first_line_indent
+
+  - id: headings_clear
+    category: formal
+    label: "소제목을 크고 굵게, 내용이 드러나게"
+    auto: true
+    check: has_section_headings
+
+  - id: page_numbers
+    category: formal
+    label: "쪽번호 p/q 형식 (아래 중앙 또는 오른쪽)"
+    auto: false
+
+  - id: volume_limit
+    category: formal
+    label: "분량 5쪽 이내 권장, 최대 10쪽"
+    auto: true
+    check: page_estimate
+
+  - id: whitespace
+    category: formal
+    label: "글과 그림 사이 여백 충분"
+    auto: false
+
+  # --- 내용적 ---
+  - id: core_info_first
+    category: content
+    label: "핵심 정보(결론)를 앞쪽에 배치"
+    auto: true
+    check: conclusion_first
+
+  - id: one_idea_per_sentence
+    category: content
+    label: "한 문장에 하나의 정보만"
+    auto: true
+    check: sentence_length
+
+  - id: simple_words
+    category: content
+    label: "단순한 단어·구어체·존댓말"
+    auto: false
+
+  - id: legal_terms_explained
+    category: content
+    label: "법률용어 등 어려운 말 풀어서 설명"
+    auto: true
+    check: unexplained_legal_terms
+
+  - id: sentence_lines
+    category: content
+    label: "문장 1~2줄(최대 3줄), 어절 단위 줄바꿈"
+    auto: true
+    check: line_break_length
+
+  - id: numbers_clear
+    category: content
+    label: "숫자·날짜·금액 이해하기 쉽게"
+    auto: true
+    check: number_date_format
+
+  - id: active_voice
+    category: content
+    label: "능동태 문장"
+    auto: true
+    check: passive_voice
+
+  - id: affirmative
+    category: content
+    label: "긍정문 위주, 이중부정 없음"
+    auto: true
+    check: double_negative
+
+  - id: chronological
+    category: content
+    label: "시간 순서대로 구성 (범죄·사실 서술)"
+    auto: false
+
+  - id: clear_referents
+    category: content
+    label: "그·그건 등 지시대명사 대신 이름·명칭"
+    auto: true
+    check: vague_pronouns
+
+  - id: no_abbreviation
+    category: content
+    label: "축약어 사용하지 않음"
+    auto: true
+    check: abbreviations
+
+  - id: no_symbols
+    category: content
+    label: "%, &, $ 대신 풀어쓰기"
+    auto: true
+    check: ascii_symbols
+
+  - id: no_metaphor
+    category: content
+    label: "비유적 표현 없음"
+    auto: false
+
+  - id: narrative_not_outline
+    category: content
+    label: "개조식이 아닌 서술식"
+    auto: true
+    check: outline_only
+
+  # --- 참여적 ---
+  - id: literacy_level
+    category: content
+    label: "당사자 문해력 수준에 맞게 작성"
+    auto: false
+    participatory: true
+
+  - id: party_test
+    category: participatory
+    label: "완료 전 당사자에게 이지리드 이해 테스트"
+    auto: false
+    participatory: true

@@ -24,140 +24,85 @@ DB_MATCH_THRESHOLD = 55
 DB_RESULT_LIMIT = 6
 IMAGE_TITLE_RECOMMEND_LIMIT = 5
 FRONTEND_CONTEXT = """
-## 화면 정보
-- 공통: 오른쪽 아래 챗봇 버튼을 누르면 대화창이 열립니다.
-- 업로드 페이지: 파일을 드래그/선택해서 업로드하고, 업로드 버튼으로 다음 단계로 이동합니다. 관리자이면 저장소 관리 링크가 보입니다.
-- 요약 페이지: 왼쪽에는 원문 페이지, 오른쪽에는 요약문이 보입니다. AI 프롬프트로 요약을 다시 다듬을 수 있습니다.
-- 번역 페이지: 왼쪽에는 요약문, 오른쪽에는 번역문 편집 영역이 있습니다. AI 프롬프트로 번역을 수정할 수 있습니다.
-- 그림 페이지: 왼쪽에는 번역문, 오른쪽에는 그림 DB가 있습니다. 검색창으로 그림을 찾고 드래그해서 배치합니다. 배치된 그림은 X 버튼으로 삭제할 수 있습니다.
-- 내보내기 페이지: 완성된 이지리드 결과를 미리 보고 DOCX/PDF로 내보냅니다.
-- 관리자 저장소 페이지: 계정별 저장 프로젝트를 확인하고 X 버튼으로 삭제할 수 있습니다.
+## ERAI 서비스 이용 가이드
+- 공통 이용 방법: ERAI는 판결문을 업로드한 뒤 업로드 → 요약 → 번역 → 시각자료 → 추출 순서로 이지리드 문서를 만드는 서비스입니다.
+- 각 화면 위쪽의 단계 표시를 통해 현재 작업 단계를 확인할 수 있습니다.
+- 오른쪽 아래의 챗봇 버튼을 누르면 대화창이 열립니다.
+- 챗봇에는 서비스 이용 방법, 법률용어의 쉬운 뜻, 현재 작업 중인 판결문에 관해 질문할 수 있습니다.
+- 챗봇은 사용자의 화면을 직접 보거나 버튼을 대신 누를 수 없습니다. 사용자가 현재 보고 있는 페이지나 오류 내용을 함께 알려주면 더 정확하게 안내할 수 있습니다.
+- AI가 만든 요약문, 번역문과 시각자료는 반드시 원 판결문과 비교하여 확인해야 합니다.
+- 최종 문서를 추출하기 전에 날짜, 금액, 형량, 사람 이름과 판결 결론이 정확한지 확인해야 합니다.
+
+## 로그인과 기존 프로젝트
+- 로그인한 사용자는 자신이 이전에 작업한 프로젝트를 업로드 페이지의 기존 프로젝트 대시보드에서 확인할 수 있습니다.
+- 다른 계정으로 로그인하면 해당 계정에 저장된 프로젝트만 표시될 수 있습니다.
+- 예전에 올린 판결문, 이전에 작업한 문서, 과거 프로젝트는 모두 기존 프로젝트 대시보드에서 찾습니다.
+- 기존 프로젝트에서는 원문, 요약문, 번역문과 최종본의 생성 여부를 확인할 수 있습니다.
+- 사용자는 각 자료 옆의 열기 버튼을 눌러 내용을 확인할 수 있습니다.
+
+## 1. 업로드 페이지
+- Browse Files 버튼을 누르거나 업로드 영역에 파일을 넣어 판결문 PDF 또는 Word 파일을 선택할 수 있습니다.
+- 업로드 버튼을 누르면 AI가 판결문에서 글자를 추출하고 사건번호와 내용을 참고하여 사건 유형을 자동 추정합니다.
+- 사건 유형 선택 팝업이 나타나면 사용자는 형사·민사·가사·행정 중 올바른 유형을 직접 확인하고 선택해야 합니다.
+- AI가 추정한 사건 유형이 틀릴 수 있으므로 사건번호와 판결문 내용을 보고 다시 확인해야 합니다.
+- 사건 유형을 선택하면 요약 단계로 이동할 수 있습니다.
+
+### 기존 프로젝트 확인
+- 업로드 페이지 하단의 기존 프로젝트 대시보드에서 이전 작업을 확인할 수 있습니다.
+- 이전에 첨부한 판결문의 원문을 보려면 해당 프로젝트의 원문 열기 버튼을 누릅니다.
+- 이전에 만든 요약문을 보려면 요약문 열기 버튼을 누릅니다.
+- 이전에 만든 번역문을 보려면 번역문 열기 버튼을 누릅니다.
+- 이전에 만든 최종 이지리드 문서를 보려면 최종본 열기 버튼을 누릅니다.
+- 현재 새로 첨부한 판결문이 아니라 예전에 첨부한 판결문도 모두 기존 프로젝트 대시보드에서 찾습니다.
+
+### 기존 프로젝트 상태
+- 원문 완료는 판결문 파일이 업로드되었다는 뜻입니다.
+- 요약문 완료는 판결문의 핵심 내용을 정리한 요약문이 생성되었다는 뜻입니다.
+- 번역문 완료는 요약문을 쉬운 문장으로 바꾼 결과가 생성되었다는 뜻입니다.
+- 최종본 완료는 시각자료 배치와 최종 문서 생성이 완료되었다는 뜻입니다.
+
+## 2. 요약 페이지
+- 왼쪽 화면에는 사용자가 첨부한 판결문 원문이 표시됩니다.
+- 오른쪽 화면에는 선택한 사건 유형에 맞게 AI가 생성한 요약문이 표시됩니다.
+- 사용자는 원문과 요약문을 비교하면서 내용이 정확한지 확인해야 합니다.
+- 오른쪽 편집 영역에서 요약문 내용을 직접 추가하거나 삭제할 수 있습니다.
+- 글자 크기와 강조 여부도 직접 수정할 수 있습니다.
+- AI 프롬프트 입력창에 수정 요청을 입력하여 요약문을 다시 다듬을 수 있습니다.
+
+## 3. 번역 페이지
+- 왼쪽 화면에는 앞 단계에서 확정한 요약문이 표시됩니다.
+- 오른쪽 화면에는 요약문을 쉬운 문장으로 바꾼 이지리드 번역문이 표시됩니다.
+- 사용자는 요약문과 번역문을 비교하여 원래 의미가 바뀌지 않았는지 확인해야 합니다.
+- 오른쪽 편집 영역에서 번역문 내용을 직접 수정할 수 있습니다.
+- 글자 크기와 강조 여부도 직접 수정할 수 있습니다.
+- 번역문 왼쪽의 노란색 시각자료 영역은 최종 이지리드에서 그림이 배치될 위치를 미리 보여줍니다.
+
+## 4. 시각자료 페이지
+- 왼쪽 화면에는 번역문과 시각자료가 배치될 위치가 표시됩니다.
+- 오른쪽 화면에는 ERAI에 저장된 시각자료 목록이 표시됩니다.
+- Solar AI는 각 문장이나 항목의 의미를 참고하여 관련 시각자료를 자동으로 추천하고 배치합니다.
+- 자동으로 배치된 그림이 문장 의미와 다르면 사용자가 직접 변경해야 합니다.
+- 사용자는 오른쪽 시각자료 목록의 그림을 끌어서 원하는 위치에 배치할 수 있습니다.
+- AI 프롬프트에 `무죄와 관련된 그림을 찾아줘`, `징역을 설명하는 그림을 찾아줘`처럼 원하는 의미를 구체적으로 입력할 수 있습니다.
+
+## 5. 추출 페이지
+- 추출 페이지에서는 완성된 이지리드 문서를 PDF 형태의 미리보기로 확인할 수 있습니다.
+- 화면 하단에는 PDF 추출하기, Word 추출하기, 업로드 화면으로 돌아가기 버튼이 있습니다.
+- PDF 추출하기: 현재 미리보기와 같은 형태의 이지리드 문서를 PDF 파일로 다운로드합니다.
+- Word 추출하기: 내용을 복사하거나 다시 편집하기 쉬운 Word 파일로 다운로드합니다.
+- 업로드 화면으로 돌아가기: 업로드 페이지로 이동합니다.
+
+## 자주 묻는 질문
+- 사용자가 `예전에 올린 판결문은 어디서 봐요?`, `이전 파일은 어디 있어요?`, `과거 프로젝트를 찾고 싶어요`라고 물으면 업로드 페이지 하단의 기존 프로젝트 대시보드를 안내합니다.
+- 사용자가 `원문은 어디서 봐요?`라고 물으면 기존 프로젝트 대시보드의 원문 열기 버튼을 안내합니다.
+- 사용자가 `요약문은 어디서 봐요?`라고 물으면 기존 프로젝트 대시보드의 요약문 열기 버튼을 안내합니다.
+- 사용자가 `번역문은 어디서 봐요?`라고 물으면 기존 프로젝트 대시보드의 번역문 열기 버튼을 안내합니다.
+- 사용자가 `최종본은 어디서 봐요?`라고 물으면 기존 프로젝트 대시보드의 최종본 열기 버튼을 안내합니다.
+- 사용자가 `사건 유형이 잘못됐어요`라고 물으면 사건 유형 선택 화면에서 올바른 사건 유형을 다시 확인하도록 안내합니다.
+- 사용자가 `그림을 바꾸고 싶어요`라고 물으면 시각자료 페이지에서 오른쪽 그림을 원하는 위치로 끌어 배치하도록 안내합니다.
+- 사용자가 `PDF와 Word의 차이가 뭐예요?`라고 물으면 PDF는 최종 모양 유지에 적합하고 Word는 추가 편집과 재사용에 적합하다고 설명합니다.
+- 사용자가 특정 화면이나 버튼을 찾지 못하면 현재 보고 있는 페이지와 표시된 오류 문구를 알려 달라고 안내합니다.
 """.strip()
-
-SOURCE_REQUEST_RE = re.compile(
-    r"(출처|근거|참고|어디서|어떤\s*자료|무슨\s*근거|source|reference|citat)",
-    re.IGNORECASE,
-)
-IMAGE_REQUEST_RE = re.compile(
-    r"(이미지|그림|삽화|일러스트|사진|아이콘|제목|title|추천)",
-    re.IGNORECASE,
-)
-
-SOURCE_SENTENCE_RE = re.compile(
-    r"[^.?!\n]*?(출처|근거|참고|웹\s*검색|DB\s*자료|문서\s*맥락|자료를\s*바탕|바탕으로)[^.?!\n]*[.?!]?",
-    re.IGNORECASE,
-)
-
-
-def _strip_quote_markers(text: str) -> str:
-    cleaned_lines: list[str] = []
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
-        if line == ">":
-            continue
-        # Remove markdown blockquote prefixes like "> 내용".
-        line = re.sub(r"^>+\s*", "", line)
-        cleaned_lines.append(line)
-    cleaned = "\n".join(cleaned_lines)
-    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
-    return cleaned.strip()
-
-
-def _sanitize_reply(reply: str) -> str:
-    lines: list[str] = []
-    for raw_line in reply.splitlines():
-        line = raw_line.strip()
-        if not line:
-            lines.append("")
-            continue
-        if re.match(r"^(출처|참고|근거|웹 검색 결과|DB 자료|문서 맥락)\s*[:：]", line):
-            continue
-        line = line.replace("웹 검색 결과에 따르면", "")
-        line = line.replace("웹 검색 결과를 보면", "")
-        line = line.replace("DB 자료에 따르면", "")
-        line = line.replace("DB 자료를 보면", "")
-        line = line.replace("문서 맥락상", "")
-        line = line.replace("현재 문서 기준으로", "")
-        line = line.replace("현재 화면 기준으로", "")
-        lines.append(line.strip())
-
-    cleaned = "\n".join(lines)
-    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
-    return _strip_quote_markers(cleaned)
-
-
-def _remove_source_sentences(reply: str) -> str:
-    text = SOURCE_SENTENCE_RE.sub("", reply)
-    text = re.sub(r"(?:^|\n)\s*(?:출처|참고|근거|웹 검색 결과|DB 자료|문서 맥락)\s*[:：].*(?:\n|$)", "\n", text, flags=re.IGNORECASE)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return _strip_quote_markers(text)
-
-
-def _wants_source(question: str) -> bool:
-    return bool(SOURCE_REQUEST_RE.search(question))
-
-
-def _wants_image_help(question: str) -> bool:
-    return bool(IMAGE_REQUEST_RE.search(question))
-
-
-def _is_short_keyword_query(question: str) -> bool:
-    normalized = re.sub(r"\s+", " ", question).strip(" ?!.,")
-    if not normalized:
-        return False
-    return len(normalized) <= 20 and len(normalized.split()) <= 3
-
-
-def _should_include_image_context(question: str, hits: list[dict[str, str]]) -> bool:
-    if not hits:
-        return False
-    return _wants_image_help(question) or _is_short_keyword_query(question)
-
-
-def search_image_catalog(query: str, *, limit: int = 8) -> list[dict[str, str]]:
-    if not query.strip():
-        return []
-
-    catalog = load_easy_text_catalog()
-    if not catalog:
-        return []
-
-    choices = [
-        (
-            f"{item.get('title', '')} {item.get('easy_text', '')} {item.get('original', '')}".strip(),
-            item,
-        )
-        for item in catalog
-    ]
-    matches = process.extract(
-        query,
-        choices,
-        scorer=fuzz.token_set_ratio,
-        processor=lambda entry: entry[0],
-        limit=limit * 2,
-    )
-
-    results: list[dict[str, str]] = []
-    seen_titles: set[str] = set()
-    for choice, score, _ in matches:
-        if score < 45:
-            continue
-        item = choice[1]
-        title = (item.get("title") or "").strip()
-        if not title or title in seen_titles:
-            continue
-        seen_titles.add(title)
-        results.append(
-            {
-                "title": title,
-                "image_file": str(item.get("image_file") or "").strip(),
-                "easy_text": str(item.get("easy_text") or "").strip(),
-                "original": str(item.get("original") or "").strip(),
-            }
-        )
-        if len(results) >= limit:
-            break
-    return results
 
 
 def search_image_titles(query: str, *, limit: int | None = None) -> list[dict[str, str]]:
@@ -210,9 +155,48 @@ def _build_image_title_reply(hits: list[dict[str, str]]) -> str:
     return "\n".join(lines)
 
 
+def _build_service_help_reply(question: str) -> str:
+    normalized = re.sub(r"\s+", "", question)
+
+    if any(
+        token in normalized
+        for token in [
+            "원문",
+            "이전",
+            "저장된문서",
+            "저장된문서함",
+            "내작업기록",
+            "기존프로젝트",
+            "기록",
+            "히스토리",
+            "업로드기록",
+            "내문서함",
+        ]
+    ):
+        return (
+            "이전에 첨부한 판결문의 원문은 **업로드 페이지 하단의 기존 프로젝트 대시보드**에서 확인할 수 있습니다. "
+            "해당 항목의 **원문 열기** 버튼을 누르면 됩니다. "
+            "요약문, 번역문, 최종본도 모두 같은 **기존 프로젝트 대시보드**에서 확인할 수 있습니다. "
+            "`내 문서함`, `업로드 기록`, `기록`, `히스토리` 같은 메뉴는 안내하지 않습니다."
+        )
+
+    if any(token in normalized for token in ["요약문", "번역문", "최종본", "결과", "문서"]):
+        return (
+            "이전에 첨부한 판결문의 요약문, 번역문, 최종본은 **업로드 페이지 하단의 기존 프로젝트 대시보드**에서 확인할 수 있습니다. "
+            "현재 새로 첨부한 문서가 아니더라도, 예전에 작업한 문서의 결과도 그곳에서 찾으면 됩니다. "
+            "다른 상단 메뉴를 안내하지 말고, 항상 **기존 프로젝트 대시보드**를 먼저 안내합니다."
+        )
+
+    return (
+        "서비스 이용 방법은 **업로드 페이지 하단의 기존 프로젝트 대시보드**를 먼저 확인해 주세요. "
+        "이곳에서 이전에 첨부한 판결문의 원문, 요약문, 번역문, 최종본을 볼 수 있습니다. "
+        "별도 상단 메뉴 이름을 추측해서 안내하지 않습니다."
+    )
+
+
 def _sanitize_reply_for_request(reply: str, *, wants_source: bool) -> str:
     if wants_source:
-        return reply.replace(NEED_WEB_MARKER, "").strip()
+        return _normalize_reply_markup(reply.replace(NEED_WEB_MARKER, "").strip())
     cleaned = _sanitize_reply(reply).replace(NEED_WEB_MARKER, "").strip()
     return _remove_source_sentences(cleaned)
 
@@ -380,10 +364,14 @@ async def answer_chat(
     history = history or []
     wants_source = _wants_source(question)
     wants_image_help = _wants_image_help(question)
+    wants_service_help = _wants_service_help(question)
 
     if wants_image_help:
         image_hits = search_image_titles(question, limit=IMAGE_TITLE_RECOMMEND_LIMIT)
         return ChatResponse(reply=_build_image_title_reply(image_hits), sources=["db_rules"])
+
+    if wants_service_help:
+        return ChatResponse(reply=_build_service_help_reply(question), sources=["service_guide"])
 
     system = load_chatbot_prompt()
     db_hits = [] if wants_image_help else search_legal_db(question)
